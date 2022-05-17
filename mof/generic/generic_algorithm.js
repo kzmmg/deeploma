@@ -1,12 +1,9 @@
 const assert = require('assert')
 
-const optimization_problem = 	require('./optimization_problem.js')
-const optimization_solution = 	require('./optimization_solution.js')
-
 const max_steps = 1000
 
 // base algorithm
-class basic_algorithm {
+class generic_algorithm {
 	constructor(problem, config) {
 		this.problem = problem
 		this.config = config
@@ -52,7 +49,7 @@ class basic_algorithm {
 		if(operator) 
 			operator(0)
 		
-		while(true){
+		while(true) {
 			if(this.terminate()) 
 				break
 			
@@ -98,7 +95,7 @@ class basic_algorithm {
 	}	
 	//given two problem solution ,determine if they have equal quality / fitness
 	_equal (solution1, solution2){ 
-		return Math.abs(solution1.fitness - solution2.fitness) <= basic_algorithm.SOLUTION_QUALITY_MIN_DIFFERENCE 
+		return Math.abs(solution1.fitness - solution2.fitness) <= generic_algorithm.SOLUTION_QUALITY_MIN_DIFFERENCE 
 	}
 	
 	// single step
@@ -119,4 +116,4 @@ class basic_algorithm {
 	}
 }
 
-module.exports = basic_algorithm;
+module.exports = generic_algorithm

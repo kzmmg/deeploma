@@ -1,10 +1,10 @@
 const assert = require("assert")
 
-const generic_optimization_solution = require("../generic_optimization_solution.js")
+const generic_solution = require("../generic_solution.js")
 
 // is constructor working okay
 
-class test_solution_1 extends generic_optimization_solution {
+class test_solution_1 extends generic_solution {
 	constructor(p1, p2) {
 		super(p1, p2)
 	}
@@ -15,7 +15,7 @@ let test_solution = new test_solution_1(1, 2)
 assert(test_solution.data === 1, [test_solution.data])
 assert(test_solution.fitness === 2, [test_solution.fitness])
 
-class test_solution_2 extends generic_optimization_solution {
+class test_solution_2 extends generic_solution {
 	constructor(p1, p2) {
 		super(...arguments)
 	}
@@ -26,7 +26,7 @@ test_solution = new test_solution_2(1, 2)
 assert(test_solution.data === 1, [test_solution.data])
 assert(test_solution.fitness === 2, [test_solution.fitness])
 
-class test_solution_3 extends generic_optimization_solution {
+class test_solution_3 extends generic_solution {
 	constructor(...args) {
 		super(...args)
 	}
@@ -39,7 +39,7 @@ assert(test_solution.fitness === 2, [test_solution.fitness])
 
 // is identical method working okay
 
-class test_solution_4 extends generic_optimization_solution {
+class test_solution_4 extends generic_solution {
 	identical(another) {
 		assert(another === 3)
 		
@@ -56,7 +56,7 @@ assert(test_solution.identical(3) === 4)
 
 // is parse_data method working okay
 
-class test_solution_5 extends generic_optimization_solution {
+class test_solution_5 extends generic_solution {
 	method() {
 		super.parse_data()
 	}
@@ -71,7 +71,7 @@ assert.throws(() => test_solution.method())
 
 // is parse_data method working okay
 
-class test_solution_6 extends generic_optimization_solution {
+class test_solution_6 extends generic_solution {
 	static parse_data(param) {
 		assert(param === 3)
 		return 4
