@@ -1,7 +1,7 @@
 const guess_generic = require("./guess_generic.js")
-const THREE = require("./three.js")
+const THREE = require("../libs/three.js")
 
-require("./geometry.js")(THREE)
+require("../libs/geometry.js")(THREE)
 
 // bounding box-based "strategies"
 

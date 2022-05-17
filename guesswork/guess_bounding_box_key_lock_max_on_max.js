@@ -1,6 +1,6 @@
 const guess_bounding_box_generic = require("./guess_bounding_box_generic.js")
 
-const THREE = require("./three.js")
+const THREE = require("../three.js")
 
 const HACK = 1000
 
@@ -76,9 +76,9 @@ class guess_bounding_box_key_lock_max_on_max extends guess_bounding_box_generic 
 		let len2_1 = bb1.max.y - bb1.min.y
 		let len3_1 = bb1.max.z - bb1.min.z
 		
-		let len1_2 = bb1.max.x - bb2.min.x
-		let len2_2 = bb1.max.y - bb2.min.y
-		let len3_2 = bb1.max.z - bb2.min.z
+		let len1_2 = bb2.max.x - bb2.min.x
+		let len2_2 = bb2.max.y - bb2.min.y
+		let len3_2 = bb2.max.z - bb2.min.z
 		
 		// 
 		

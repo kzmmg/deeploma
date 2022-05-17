@@ -1,6 +1,4 @@
-var assert = require('assert');
-
-var optimization_solution = require('./optimization_solution.js');
+const assert = require('assert')
 
 class optimization_problem {
 	constructor(data, minimization) {

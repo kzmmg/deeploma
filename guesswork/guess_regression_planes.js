@@ -1,7 +1,7 @@
 const guess_generic = require("./guess_generic.js")
 
-const THREE = require("./three.js")
-const {Matrix, $M, Vector, $V, Line, $L, Plane, $P} = require("./sylvester.js")
+const THREE = require("../libs/three.js")
+const {Matrix, $M, Vector, $V, Line, $L, Plane, $P} = require("../libs/sylvester.js")
 
 const HACK = 1000
 

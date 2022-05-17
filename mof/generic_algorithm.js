@@ -3,7 +3,7 @@ const assert = require('assert')
 const optimization_problem = 	require('./optimization_problem.js')
 const optimization_solution = 	require('./optimization_solution.js')
 
-const max_steps = 1000;
+const max_steps = 1000
 
 // base algorithm
 class basic_algorithm {
