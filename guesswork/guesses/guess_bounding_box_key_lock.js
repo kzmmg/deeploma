@@ -1,12 +1,12 @@
-const guess_bounding_box_generic = require("./guess_bounding_box_generic.js")
+const guess_bounding_box_generic = require("../generic/guess_bounding_box_generic.js")
 
-const THREE = require("../libs/three.js")
+const THREE = require("../../libs/three.js")
 
 const HACK = 1000
 
 // bounding box-based "strategies"
 
-class guess_backbone_bounding_box_key_lock extends guess_backbone_bounding_box_generic {
+class guess_bounding_box_key_lock extends guess_bounding_box_generic {
 	
 	_compute_midpoint = (bounding_box) => {
 		return new THREE.Vector3(
@@ -71,27 +71,17 @@ class guess_backbone_bounding_box_key_lock extends guess_backbone_bounding_box_g
 		return [ rotation1, rotation2 ]
 	}
 	
-	guess_backbone_bb(molecules, backbones, b_boxes, boxes, b_geoms, geoms) {
-		let bb1 = b_boxes[0]
-		let bb2 = b_boxes[1]
-		
-		let backbone1 = backbones[0]
-		let backbone2 = backbones[1]
-		
-		let b_geom1 = b_geoms[0]
-		let b_geom2 = b_geoms[1]
-		
-		let geom1 = geoms[0]
-		let geom2 = geoms[1]
-		
+	guess_bb(molecule1, molecule2, bb1, bb2, geometry1, geometry2) {
 		let len1_1 = bb1.max.x - bb1.min.x
 		let len2_1 = bb1.max.y - bb1.min.y
 		let len3_1 = bb1.max.z - bb1.min.z
 		
-		let len1_2 = bb1.max.x - bb2.min.x
-		let len2_2 = bb1.max.y - bb2.min.y
-		let len3_2 = bb1.max.z - bb2.min.z
-				
+		let len1_2 = bb2.max.x - bb2.min.x
+		let len2_2 = bb2.max.y - bb2.min.y
+		let len3_2 = bb2.max.z - bb2.min.z
+		
+		// 
+		
 		let max_len_1 = Math.max(len1_1, len2_1, len3_1)
 		let max_len_2 = Math.max(len1_2, len2_2, len3_2)
 		
@@ -103,12 +93,12 @@ class guess_backbone_bounding_box_key_lock extends guess_backbone_bounding_box_g
 		
 		if(max_len_1 > max_len_2) { // molecule1 is lock
 			let result = this._define_rotation(
-							backbone1, 
+							molecule1, 
 							max_len_1, 
 							len1_1, 
 							len2_1, 
 							len3_1, 
-							backbone2, 
+							molecule2, 
 							min_len_2, 
 							len1_2, 
 							len2_2, 
@@ -119,12 +109,12 @@ class guess_backbone_bounding_box_key_lock extends guess_backbone_bounding_box_g
 			
 		} else { // molecule2 is lock
 			let result = this._define_rotation(
-							backbone2, 
+							molecule2, 
 							max_len_2, 
 							len1_2, 
 							len2_2, 
 							len3_2, 
-							backbone1, 
+							molecule1, 
 							min_len_1, 
 							len1_1, 
 							len2_1, 
@@ -139,14 +129,14 @@ class guess_backbone_bounding_box_key_lock extends guess_backbone_bounding_box_g
 		
 		console.log(midpoint1, midpoint2)
 		
-		b_geom1.translate(-midpoint1.x, -midpoint1.y, -midpoint1.z)
-		b_geom2.translate(-midpoint2.x, -midpoint2.y, -midpoint2.z) 
+		geometry1.translate(-midpoint1.x, -midpoint1.y, -midpoint1.z)
+		geometry2.translate(-midpoint2.x, -midpoint2.y, -midpoint2.z) 
 		
-		b_geom1.computeBoundingBox()
-		b_geom2.computeBoundingBox()
+		geometry1.computeBoundingBox()
+		geometry2.computeBoundingBox()
 		
-		bb1 = b_geom1.boundingBox
-		bb2 = b_geom2.boundingBox
+		bb1 = geometry1.boundingBox
+		bb2 = geometry2.boundingBox
 		
 		midpoint1 = this._compute_midpoint(bb1)
 		midpoint2 = this._compute_midpoint(bb2)
@@ -156,25 +146,25 @@ class guess_backbone_bounding_box_key_lock extends guess_backbone_bounding_box_g
 		
 		console.log(rotation1, rotation2)
 		
-		b_geom1.rotateX(rotation1[0] * Math.PI / 180)
-		b_geom1.rotateY(rotation1[1] * Math.PI / 180)
-		b_geom1.rotateZ(rotation1[2] * Math.PI / 180)
+		geometry1.rotateX(rotation1[0] * Math.PI / 180)
+		geometry1.rotateY(rotation1[1] * Math.PI / 180)
+		geometry1.rotateZ(rotation1[2] * Math.PI / 180)
 									   
 		//console.log(geometry2.vertices)
-		b_geom2.rotateX(rotation2[0] * Math.PI / 180)
-		b_geom2.rotateY(rotation2[1] * Math.PI / 180)
-		b_geom2.rotateZ(rotation2[2] * Math.PI / 180)
+		geometry2.rotateX(rotation2[0] * Math.PI / 180)
+		geometry2.rotateY(rotation2[1] * Math.PI / 180)
+		geometry2.rotateZ(rotation2[2] * Math.PI / 180)
 		
 		// dirty trick everyone hates
-		b_geom1.translate(-HACK, 0, 0)
-		b_geom2.translate(HACK, 0, 0)
+		geometry1.translate(-HACK, 0, 0)
+		geometry2.translate(HACK, 0, 0)
 		
 		//console.log(geometry2.vertices)
-		b_geom1.computeBoundingBox()
-		b_geom2.computeBoundingBox()
+		geometry1.computeBoundingBox()
+		geometry2.computeBoundingBox()
 		
-		bb1 = b_geom1.boundingBox
-		bb2 = b_geom2.boundingBox
+		bb1 = geometry1.boundingBox
+		bb2 = geometry2.boundingBox
 		
 		// first, move x.min to x.min
 		
@@ -205,57 +195,18 @@ class guess_backbone_bounding_box_key_lock extends guess_backbone_bounding_box_g
 		
 		translation = [diff_x, diff_y, diff_z]
 		
-		// okay now we know rotation and translation and now we will use
-		// all avalaible atoms, not only backbone
+		geometry1.translate(translation[0], translation[1], translation[2])
 		
-		bb1 = boxes[0]
-		bb2 = boxes[1]
+		geometry1.translate(-HACK, 0, 0)
+		geometry2.translate(-HACK, 0, 0)
 		
-		midpoint1 = this._compute_midpoint(bb1)
-		midpoint2 = this._compute_midpoint(bb2)
-		
-		// console.log(midpoint1, midpoint2)
-		
-		geom1.translate(-midpoint1.x, -midpoint1.y, -midpoint1.z)
-		geom2.translate(-midpoint2.x, -midpoint2.y, -midpoint2.z) 
-		
-		geom1.computeBoundingBox()
-		geom2.computeBoundingBox()
-		
-		bb1 = b_geom1.boundingBox
-		bb2 = b_geom2.boundingBox
-		
-		midpoint1 = this._compute_midpoint(bb1)
-		midpoint2 = this._compute_midpoint(bb2)
-		
-		geom1.rotateX(rotation1[0] * Math.PI / 180)
-		geom1.rotateY(rotation1[1] * Math.PI / 180)
-		geom1.rotateZ(rotation1[2] * Math.PI / 180)
-									   
-		//console.log(geometry2.vertices)
-		geom2.rotateX(rotation2[0] * Math.PI / 180)
-		geom2.rotateY(rotation2[1] * Math.PI / 180)
-		geom2.rotateZ(rotation2[2] * Math.PI / 180)
-		
-		// dirty trick everyone hates
-		geom1.translate(-HACK, 0, 0)
-		geom2.translate(HACK, 0, 0)
-				
-		geom1.translate(translation[0], translation[1], translation[2])
-		
-		geom1.translate(-HACK, 0, 0)
-		geom2.translate(-HACK, 0, 0)
-		
-		let molecule1 = molecules[0]
-		let molecule2 = molecules[1]
-		
-		geom1.vertices.forEach((vector, i) => {
+		geometry1.vertices.forEach((vector, i) => {
 			molecule1.atoms[i].x = vector.x
 			molecule1.atoms[i].y = vector.y
 			molecule1.atoms[i].z = vector.z
 		})
 	
-		geom2.vertices.forEach((vector, i) => {
+		geometry2.vertices.forEach((vector, i) => {
 			molecule2.atoms[i].x = vector.x
 			molecule2.atoms[i].y = vector.y
 			molecule2.atoms[i].z = vector.z
@@ -263,4 +214,4 @@ class guess_backbone_bounding_box_key_lock extends guess_backbone_bounding_box_g
 	}
 }
 
-module.exports = guess_backbone_bounding_box_key_lock
+module.exports = guess_bounding_box_key_lock

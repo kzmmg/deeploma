@@ -1,6 +1,6 @@
-const guess_bounding_box_generic = require("./guess_bounding_box_generic.js")
+const guess_bounding_box_generic = require("../generic/guess_bounding_box_generic.js")
 
-const THREE = require("../three.js")
+const THREE = require("../../libs/three.js")
 
 const HACK = 1000
 

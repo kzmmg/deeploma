@@ -1,0 +1,6 @@
+module.exports.guess_identical   							= require("./guess_identical.js")
+module.exports.guess_backbone_bounding_box_combine_oyz 		= require("./guess_backbone_bounding_box_combine_oyz.js")
+module.exports.guess_backbone_bounding_box_key_lock   		= require("./guess_backbone_bounding_box_key_lock.js")
+module.exports.guess_bounding_box_key_lock   				= require("./guess_bounding_box_key_lock.js")
+module.exports.guess_bounding_box_key_lock_max_on_max   	= require("./guess_bounding_box_key_lock_max_on_max.js")
+module.exports.guess_regression_planes   					= require("./guess_regression_planes.js")

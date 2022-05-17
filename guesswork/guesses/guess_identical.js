@@ -1,4 +1,4 @@
-const guess_generic = require("./guess_generic.js")
+const guess_generic = require("../generic/guess_generic.js")
 
 // this hypothesis says:
 // "leave it as is"

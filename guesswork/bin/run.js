@@ -1,7 +1,7 @@
 const fs = require("fs")
 
 const print_guess_classes = () => {
-	let ls = fs.readdirSync("../")
+	let ls = fs.readdirSync("../guesses/")
 	
 	ls = ls.filter((name) => {
 		return name.indexOf("generic") === -1 && name.indexOf("guess_") !== -1
@@ -31,7 +31,7 @@ let pdb2 = process.argv[3]
 
 let guess_class = process.argv[4]
 
-let guess = require("../" + guess_class + ".js")
+let guess = require("../guesses/" + guess_class + ".js")
 
 new guess(pdb1, pdb2).do_guess()
 
