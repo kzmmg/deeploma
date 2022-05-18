@@ -1,0 +1,6 @@
+1. Make stats little guy work (-)
+2. Add labels to each molecule canvas (-)
+3. Cleanup visualizer.js in -for3 (-)
+4. Add slider_factor2 (-)
+5. Add regression planes to visualizer (-)
+6. Add 2D reps for proteins with squares and midpoints. Leaving spheres as is (non-exclusive) (-)
