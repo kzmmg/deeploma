@@ -1,6 +1,7 @@
 import visualizer from './visualizer.js'
+import visualizer_both from './visualizer_both.js'
 
-function fetch_pdb(pdb_id1, pdb_id2) {
+function fetch_both(container, pdb_id1, pdb_id2) {
 	
 	pdb_id1 = pdb_id1 || "./doobie.pdb"
 	pdb_id2 = pdb_id2 || "./doobie2.pdb"
@@ -12,9 +13,9 @@ function fetch_pdb(pdb_id1, pdb_id2) {
 			window.fetch(pdb_id2)
 				.then(response => response.text())
 				.then((pdb2) => {
-					window.document.body.innerHtml = ''
+					container.innerHtml = ''
 					
-					visualizer(window.document.body, pdb1, pdb2, {
+					visualizer_both(container, pdb1, pdb2, {
 						radius: slider.value,
 						bonds: Boolean(check.checked),
 						light: light_slider.value,
@@ -30,6 +31,34 @@ function fetch_pdb(pdb_id1, pdb_id2) {
 		})
 		.catch(console.error.bind(console))
 }
+
+function make_fetch_one(default_pdb) {
+	return function fetch_one(container, pdb_id) {
+		pdb_id = pdb_id || default_pdb
+		
+		window.fetch(pdb_id)
+			.then(response => response.text())
+			.then((pdb) => {
+				container.innerHtml = ''
+				
+				visualizer(container, pdb, {
+					radius: slider.value,
+					bonds: Boolean(check.checked),
+					light: light_slider.value,
+					zoom: zoom_slider.value,
+					ambient: ambient_slider.value,
+					bond_top_radius: bond_top_slider.value,
+					bond_bottom_radius: bond_bottom_slider.value,
+					fov: fov_slider.value,
+					bb: Boolean(bb_check.checked),
+				})
+			})
+			.catch(console.error.bind(console))
+	}
+}
+
+const fetch_one = make_fetch_one("./doobie.pdb")
+const fetch_two = make_fetch_one("./doobie2.pdb")
 
 const group_margin = 3
 const style_group = (el, name) => {
@@ -74,9 +103,6 @@ input_label.style.display = "block"
 input_label.append(input)
 
 
-input.addEventListener('change', (event) => {
-	fetch_pdb(input.value, input2.value)
-})
 
 
 file_group.append(
@@ -105,9 +131,6 @@ input_label2.style.margin = group_margin
 input_label2.style.display = "block"
 input_label2.append(input2)
 
-input2.addEventListener('change', (event) => {
-    fetch_pdb(input.value, input2.value)
-})
 
 file_group.append(
 		(()=>{
@@ -132,9 +155,6 @@ const check = window.document.createElement('input')
 check.type = 'checkbox'
 check.title = "draw bonds"
 
-check.addEventListener('change', (event) => {
-  fetch_pdb(input.value, input2.value)
-})
 
 check_group.append(check)
 
@@ -144,9 +164,6 @@ const bb_check = window.document.createElement('input')
 bb_check.type = 'checkbox'
 bb_check.title = "draw bounding boxes"
 
-bb_check.addEventListener('change', (event) => {
-  fetch_pdb(input.value, input2.value)
-})
 
 check_group.append(bb_check)
 
@@ -160,9 +177,6 @@ const slider = window.document.createElement('input')
 slider.type = 'range'
 slider.title = "atom radius"
 
-slider.addEventListener('change', (event) => {
-  fetch_pdb(input.value, input2.value)
-})
 
 slider_group.append(slider)
 
@@ -173,9 +187,6 @@ light_slider.type = 'range'
 light_slider.value = 0
 light_slider.title = "background"
 
-light_slider.addEventListener('change', (event) => {
-  fetch_pdb(input.value, input2.value)
-})
 
 slider_group.append(light_slider)
 
@@ -186,9 +197,6 @@ ambient_slider.type = 'range'
 ambient_slider.value = 0
 ambient_slider.title = "ambient"
 
-ambient_slider.addEventListener('change', (event) => {
-  fetch_pdb(input.value, input2.value)
-})
 
 slider_group.append(ambient_slider)
 
@@ -199,9 +207,6 @@ zoom_slider.type = 'range'
 zoom_slider.value = 10
 zoom_slider.title = "zoom"
 
-zoom_slider.addEventListener('change', (event) => {
-  fetch_pdb(input.value, input2.value)
-})
 
 slider_group.append(zoom_slider)
 
@@ -213,9 +218,6 @@ bond_top_slider.type = 'range'
 bond_top_slider.value = 10
 bond_top_slider.title = "bond top radius"
 
-bond_top_slider.addEventListener('change', (event) => {
-  fetch_pdb(input.value, input2.value)
-})
 
 slider_group.append(bond_top_slider)
 
@@ -225,10 +227,6 @@ const bond_bottom_slider = window.document.createElement('input')
 bond_bottom_slider.type = 'range'
 bond_bottom_slider.value = 10
 bond_bottom_slider.title = "bond top radius"
-
-bond_bottom_slider.addEventListener('change', (event) => {
-  fetch_pdb(input.value, input2.value)
-})
 
 slider_group.append(bond_bottom_slider)
 
@@ -241,12 +239,54 @@ fov_slider.title = "field of view grad"
 fov_slider.min = 0
 fov_slider.max = 180
 
-fov_slider.addEventListener('change', (event) => {
-  fetch_pdb(input.value, input2.value)
-})
 
 slider_group.append(fov_slider)
 
+// containers for 3d
 
+const containers = window.document.createElement("div")
+containers.style.display = "flex"
+containers.style.flexWrap = "wrap"
+containers.style.height = "100%"
+window.document.body.append(containers)
 
-fetch_pdb()
+const container_one = window.document.createElement("div")
+container_one.style.overflow = "scroll"
+container_one.style.flexBasis = "50%"
+container_one.style.height = "50%"
+
+containers.append(container_one)
+
+const container_two = window.document.createElement("div")
+container_two.style.overflow = "scroll"
+container_two.style.flexBasis = "50%"
+container_two.style.height = "50%"
+containers.append(container_two)
+
+const container_both = window.document.createElement("div")
+container_both.style.overflow = "scroll"
+container_both.style.flexBasis = "100%"
+container_both.style.height = "50%"
+containers.append(container_both)
+
+const do_fetch = () => {
+	fetch_one(container_one)
+	fetch_two(container_two)
+	fetch_both(container_both)
+}
+
+do_fetch()
+
+input.addEventListener('change', 				do_fetch)
+input2.addEventListener('change', 				do_fetch)
+check.addEventListener('change', 				do_fetch)
+bb_check.addEventListener('change', 			do_fetch)
+slider.addEventListener('change', 				do_fetch)
+light_slider.addEventListener('change', 		do_fetch)
+ambient_slider.addEventListener('change', 		do_fetch)
+zoom_slider.addEventListener('change', 			do_fetch)
+bond_top_slider.addEventListener('change', 		do_fetch)
+bond_bottom_slider.addEventListener('change', 	do_fetch)
+fov_slider.addEventListener('change', 			do_fetch)
+
+window.addEventListener('resize',				do_fetch)
