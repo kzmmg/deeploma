@@ -6,6 +6,10 @@ window.THREE = THREE
 import OrbitControls from './OrbitControls.js'
 import Geometry from './Geometry.js'
 
+import * as vis_helpers from './vis_helpers.js'
+import * as vis_constants from './vis_constants.js'
+import * as materials from './vis_materials.js'
+
 const slider_factor = 1 / 50
 
 const compute_midpoint = (bounding_box) => {
@@ -199,6 +203,9 @@ function init(options) {
 	renderer.setSize(canvas_width, canvas_height)
 	renderer.setClearColor(compute_background_color(options))
 
+	// https://en.threejs-university.com/2021/08/06/optimizing-a-three-js-application-tips-for-achieving-a-fluid-rendering-at-60-fps/
+	renderer.setPixelRatio(options.pixel_ratio * vis_constants.slider_factor / 2)
+	
 	// camera
 	const camera = new THREE.PerspectiveCamera(options.fov, canvas_ratio, 2, 8000)
 	camera.position.set(10, 5, 15)

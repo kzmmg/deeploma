@@ -6,6 +6,10 @@ window.THREE = THREE
 import OrbitControls from './OrbitControls.js'
 import Geometry from './Geometry.js'
 
+import * as vis_helpers from './vis_helpers.js'
+import * as vis_constants from './vis_constants.js'
+import * as materials from './vis_materials.js'
+
 let camera
 let scene
 let renderer
@@ -15,23 +19,6 @@ let options
 
 const clock = new THREE.Clock()
 
-const compute_midpoint = (bounding_box) => {
-	return new THREE.Vector3(
-		bounding_box.min.x + ((bounding_box.max.x - bounding_box.min.x) / 2),
-		bounding_box.min.y + ((bounding_box.max.y - bounding_box.min.y) / 2),
-		bounding_box.min.z + ((bounding_box.max.z - bounding_box.min.z) / 2),
-	)
-}
-
-const slider_factor = 1 / 50
-
-const sphere_material_h = new THREE.MeshLambertMaterial({ color: 0xFFFFFF })
-const sphere_material_c = new THREE.MeshLambertMaterial({ color: 0xC8C8C8 })
-const sphere_material_n = new THREE.MeshLambertMaterial({ color: 0x8F8FFF })
-const sphere_material_o = new THREE.MeshLambertMaterial({ color: 0xff0000 })
-const sphere_material_s = new THREE.MeshLambertMaterial({ color: 0x00ffff })
-const sphere_material_d = new THREE.MeshLambertMaterial({ color: 0x573a12 })
-
 function draw_atoms(atoms, geometry, sphere_geometry) {
 	let prev_pos = void 0
 	geometry.vertices.forEach((vector3, i) => {
@@ -39,22 +26,22 @@ function draw_atoms(atoms, geometry, sphere_geometry) {
 		
 		switch(material) {
 			case 'H':
-				material = sphere_material_h
-				break
-			case 'C':
-				material = sphere_material_c
-				break
-			case 'N':
-				material = sphere_material_n
-				break
-			case 'O':
-				material = sphere_material_o
-				break
-			case 'S':
-				material = sphere_material_s
-				break
-			default:
-				material = sphere_material_d
+				material = materials.material_h
+				break      
+			case 'C':      
+				material = materials.material_c
+				break      
+			case 'N':      
+				material = materials.material_n
+				break      
+			case 'O':      
+				material = materials.material_o
+				break      
+			case 'S':      
+				material = materials.material_s
+				break      
+			default:       
+				material = materials.material_d
 				break
 		}
 		
@@ -65,12 +52,13 @@ function draw_atoms(atoms, geometry, sphere_geometry) {
 		if(options.bonds) {
 			if(prev_pos) {
 				// console.log("drawing bond")
+				
 				let now_pos = vector3
 				let distance = prev_pos.distanceTo(now_pos)
 				
 				let cylind_geometry = new THREE.CylinderGeometry(
-														options.bond_top_radius * slider_factor / 2, 
-														options.bond_bottom_radius * slider_factor / 2, 
+														options.bond_top_radius * vis_constants.slider_factor / 2, 
+														options.bond_bottom_radius * vis_constants.slider_factor / 2, 
 														distance) 
 				
 				
@@ -79,17 +67,18 @@ function draw_atoms(atoms, geometry, sphere_geometry) {
 				const stick_axis = new THREE.Vector3(bx - ax, by - ay, bz - az).normalize()
 
 				//console.log(distance, ax, bx, ay, by, az, bz)
-				// Use quaternion to rotate cylinder from default to target orientation
+				
+				// use quaternion to rotate cylinder from default to target orientation
 				const quaternion = new THREE.Quaternion()
 				const cylinder_up_axis = new THREE.Vector3( 0, 1, 0 )
 				quaternion.setFromUnitVectors(cylinder_up_axis, stick_axis)
 				cylind_geometry.applyQuaternion(quaternion)
 
-				// Translate oriented stick to location between endpoints
+				// translate oriented stick to location between endpoints
 				cylind_geometry.translate((bx+ax)/2, (by+ay)/2, (bz+az)/2)
 				
 				
-				const cyl_mesh = new THREE.Mesh(cylind_geometry, sphere_material_h)
+				const cyl_mesh = new THREE.Mesh(cylind_geometry, materials.material_h)
 				scene.add(cyl_mesh)
 			}
 			
@@ -98,7 +87,7 @@ function draw_atoms(atoms, geometry, sphere_geometry) {
 	})
 }
 
-function fill_scene(first_protein, second_protein) {
+function fill_scene(first_protein, second_protein, options) {
 	scene = new THREE.Scene()
 
 	let atoms1 = pdb_parser(first_protein).atoms
@@ -124,7 +113,7 @@ function fill_scene(first_protein, second_protein) {
 	// Calculate midpoint
 	geometry.computeBoundingBox()
 	let bounding_box = geometry.boundingBox
-	let midpoint = compute_midpoint(bounding_box)
+	let midpoint = vis_helpers.compute_midpoint(bounding_box)
 
 	// calculate the bounding sphere radius
 	const bounding_sphere_radius = atoms1.concat(atoms2).reduce((greatest_distance, atom) => {
@@ -143,20 +132,9 @@ function fill_scene(first_protein, second_protein) {
 		0 - midpoint.z
 	)
 	
-	/*geometry1.translate(
-		0 - midpoint.x,
-		0 - midpoint.y,
-		0 - midpoint.z
-	)
-	geometry2.translate(
-		0 - midpoint.x,
-		0 - midpoint.y,
-		0 - midpoint.z
-	)*/
-	
 	geometry.computeBoundingBox()
 	bounding_box = geometry.boundingBox
-	midpoint = compute_midpoint(bounding_box)
+	midpoint = vis_helpers.compute_midpoint(bounding_box)
 	
 	geometry1.computeBoundingBox()
 	let bb1 = geometry1.boundingBox
@@ -164,7 +142,8 @@ function fill_scene(first_protein, second_protein) {
 	let bb2 = geometry2.boundingBox
 
 	
-	const sphere_geometry = new THREE.SphereGeometry(options.radius * slider_factor, 16, 16)
+	const sphere_geometry = new THREE.SphereGeometry(options.radius * vis_constants.slider_factor, 16, 16)
+	
 	// drawing atoms1
 	draw_atoms(atoms1, geometry1, sphere_geometry)
 	
@@ -174,7 +153,7 @@ function fill_scene(first_protein, second_protein) {
 	let cam_position = new THREE.Vector3(0, 0, bounding_sphere_radius * 1.5)
 	camera.position.set(cam_position.x, cam_position.y, cam_position.z)
 
-	const ambient_light = new THREE.AmbientLight(compute_ambient_light())
+	const ambient_light = new THREE.AmbientLight(vis_helpers.compute_ambient_light(options))
 	scene.add(ambient_light)
 	
 	const light = new THREE.DirectionalLight(0xFFFFFF, 0.6)
@@ -206,39 +185,7 @@ function fill_scene(first_protein, second_protein) {
 	}
 }
 
-function compute_color(val) {
-	let percents = slider_factor * val / 2
-	
-	// console.log(percents, "percents")
-	
-	// OxFF = 255
-	let decimal_background_r = Math.round(255 * percents)
-	let decimal_background_g = Math.round(255 * percents)// * (1 + Math.random()) % 255
-	let decimal_background_b = Math.round(255 * percents)// * (1 + Math.random()) % 255
-	
-	let octal_background_r = Number(decimal_background_r).toString(16)
-	let octal_background_g = Number(decimal_background_g).toString(16)
-	let octal_background_b = Number(decimal_background_b).toString(16)
-	
-	if(octal_background_r.length === 1) octal_background_r = "0" + octal_background_r
-	if(octal_background_r.length > 2) octal_background_r = octal_background_r.substr(0, 2)
-	if(octal_background_g.length === 1) octal_background_g = "0" + octal_background_g
-	if(octal_background_g.length > 2) octal_background_g = octal_background_g.substr(0, 2)
-	if(octal_background_b.length === 1) octal_background_b = "0" + octal_background_b
-	if(octal_background_b.length > 2) octal_background_b = octal_background_b.substr(0, 2)
-	
-	return Number("0x" + [octal_background_r, octal_background_g, octal_background_b].join(""))
-}
-
-function compute_background_color() {
-	return compute_color(options.light)
-}
-
-function compute_ambient_light() {
-	return compute_color(options.ambient)
-}
-
-function init() {
+function init(options) {
 	const canvas_width = window.innerWidth
 	const canvas_height = window.innerHeight
 	const canvas_ratio = canvas_width / canvas_height
@@ -247,12 +194,15 @@ function init() {
 	renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false })
 	
 	renderer.setSize(canvas_width, canvas_height)
-	renderer.setClearColor(compute_background_color())
-
+	renderer.setClearColor(vis_helpers.compute_background_color(options))
+	
+	// https://en.threejs-university.com/2021/08/06/optimizing-a-three-js-application-tips-for-achieving-a-fluid-rendering-at-60-fps/
+	renderer.setPixelRatio(options.pixel_ratio * vis_constants.slider_factor / 2)
+	
 	// camera
 	camera = new THREE.PerspectiveCamera(options.fov, canvas_ratio, 2, 8000)
 	camera.position.set(10, 5, 15)
-	camera.zoom = +options.zoom * slider_factor
+	camera.zoom = +options.zoom * vis_constants.slider_factor
 	
 	camera.updateProjectionMatrix()
 
@@ -288,16 +238,12 @@ export default function visualizer(element, pdb1, pdb2 , opts) {
 		
 		options = opts
 		
-		init()
+		init(options)
 		
-		//console.log("rendering pdb1 and pdb2", pdb1, pdb2)
-		
-		fill_scene(pdb1, pdb2)
+		fill_scene(pdb1, pdb2, options)
 		add_to_dom(element)
 		animate()
 	} catch (e) {
-		let report = 'err!'
-		element.append(`${report}${e}`)
-		console.error(e)
+		vis_helpers.error_report(element, console, e)
 	}
 }

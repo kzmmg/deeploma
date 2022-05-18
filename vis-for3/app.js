@@ -25,6 +25,7 @@ function fetch_both(container, pdb_id1, pdb_id2) {
 						bond_bottom_radius: bond_bottom_slider.value,
 						fov: fov_slider.value,
 						bb: Boolean(bb_check.checked),
+						pixel_ratio: pixel_ratio_slider.value,
 					})
 				})
 				.catch(console.error.bind(console))
@@ -51,6 +52,7 @@ function make_fetch_one(default_pdb) {
 					bond_bottom_radius: bond_bottom_slider.value,
 					fov: fov_slider.value,
 					bb: Boolean(bb_check.checked),
+					pixel_ratio: pixel_ratio_slider.value,
 				})
 			})
 			.catch(console.error.bind(console))
@@ -167,6 +169,15 @@ bb_check.title = "draw bounding boxes"
 
 check_group.append(bb_check)
 
+// create bounding boxes checkbox
+const stats_check = window.document.createElement('input')
+
+stats_check.type = 'checkbox'
+stats_check.title = "show stats"
+stats_check.checked = "false"
+
+check_group.append(stats_check)
+
 const slider_group = window.document.createElement("div")
 control_group.append(slider_group)
 
@@ -242,6 +253,18 @@ fov_slider.max = 180
 
 slider_group.append(fov_slider)
 
+// create pixel_ratio slider
+const pixel_ratio_slider = window.document.createElement('input')
+
+pixel_ratio_slider.type = 'range'
+pixel_ratio_slider.value = 50
+pixel_ratio_slider.title = "pixel ratio"
+pixel_ratio_slider.min = 0
+pixel_ratio_slider.max = 100
+
+
+slider_group.append(pixel_ratio_slider)
+
 // containers for 3d
 
 const containers = window.document.createElement("div")
@@ -288,5 +311,21 @@ zoom_slider.addEventListener('change', 			do_fetch)
 bond_top_slider.addEventListener('change', 		do_fetch)
 bond_bottom_slider.addEventListener('change', 	do_fetch)
 fov_slider.addEventListener('change', 			do_fetch)
+pixel_ratio_slider.addEventListener('change', 	do_fetch)
 
 window.addEventListener('resize',				do_fetch)
+
+import './stats.js'
+
+// window.Stats = Stats
+const stats = new Stats()
+stats.showPanel(0)
+
+window.document.body.append(stats.dom)
+
+stats_check.addEventListener("change", _ => {
+	let val = Boolean(stats_check.checked)
+	
+	if(val) stats.showPanel(0)
+	if(!val) stats.showPanel(100)
+})

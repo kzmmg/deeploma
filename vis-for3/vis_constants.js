@@ -1,0 +1,1 @@
+export const slider_factor = 1 / 50
