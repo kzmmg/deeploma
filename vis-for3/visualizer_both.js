@@ -191,7 +191,7 @@ function init(options) {
 	const canvas_ratio = canvas_width / canvas_height
 
 	// renderer
-	renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false })
+	renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false, preserveDrawingBuffer: true })
 	
 	renderer.setSize(canvas_width, canvas_height)
 	renderer.setClearColor(vis_helpers.compute_background_color(options))

@@ -568,5 +568,69 @@ const colorize_labels = () => {
 
 label_color_slider.addEventListener('change', colorize_labels)
 
+// screenshot buttons
+const img = "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjMuMiIvPgogICAgPHBhdGggZD0iTTkgMkw3LjE3IDRINGMtMS4xIDAtMiAuOS0yIDJ2MTJjMCAxLjEuOSAyIDIgMmgxNmMxLjEgMCAyLS45IDItMlY2YzAtMS4xLS45LTItMi0yaC0zLjE3TDE1IDJIOXptMyAxNWMtMi43NiAwLTUtMi4yNC01LTVzMi4yNC01IDUtNSA1IDIuMjQgNSA1LTIuMjQgNS01IDV6Ii8+CiAgICA8cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+Cjwvc3ZnPgo="
+const screenshot_one  = window.document.createElement("img")
+const screenshot_two  = window.document.createElement("img")
+const screenshot_both = window.document.createElement("img")
+
+screenshot_one. src = img
+screenshot_two. src = img
+screenshot_both.src = img
+
+screenshot_one. style.width = "30px"
+screenshot_two. style.width = "30px"
+screenshot_both.style.width = "30px"
+				
+screenshot_one. style.height = "30px"
+screenshot_two. style.height = "30px"
+screenshot_both.style.height = "30px"
+				
+screenshot_one. style.position = "sticky"
+screenshot_two. style.position = "sticky"
+screenshot_both.style.position = "sticky"
+								
+screenshot_one. style.top = "48px"
+screenshot_two. style.top = "48px"
+screenshot_both.style.top = "48px"
+				
+screenshot_one. style.left = "0px"
+screenshot_two. style.left = "0px"
+screenshot_both.style.left = "0px"
+				
+screenshot_one. style.pointerEvents = "auto"
+screenshot_two. style.pointerEvents = "auto"
+screenshot_both.style.pointerEvents = "auto"
+
+const name_screenshot = _ => "vis-for3-" + (new Date()).getTime() + ".jpg"
+
+const save_screenshot = (data, filename) => {
+	let download_link = window.document.createElement("a")
+	
+	window.document.body.appendChild(download_link)
+	download_link.download = filename
+	download_link.href = data
+	download_link.click()
+	
+	window.document.body.removeChild(download_link)
+}
+
+const make_screenshoter = (container) => {
+	return () => {
+		let canvas = container.getElementsByTagName("canvas")[0]
+		let img_data = canvas.toDataURL("image/jpeg")
+		
+		save_screenshot(img_data.replace("image/jpeg", "image/octet-stream"), name_screenshot())
+	}
+}
+
+screenshot_one. addEventListener("click", make_screenshoter(canvas_container_one))
+screenshot_two. addEventListener("click", make_screenshoter(canvas_container_two))
+screenshot_both.addEventListener("click", make_screenshoter(canvas_container_both))
+
+stats_one_absolute_container. append(screenshot_one)
+stats_two_absolute_container. append(screenshot_two)
+stats_both_absolute_container.append(screenshot_both)
+
 do_fetch()
 colorize_labels()

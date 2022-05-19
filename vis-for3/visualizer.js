@@ -198,7 +198,7 @@ function init(options) {
 	const canvas_ratio = canvas_width / canvas_height
 
 	// renderer
-	const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false })
+	const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false, preserveDrawingBuffer: true  })
 	
 	renderer.setSize(canvas_width, canvas_height)
 	renderer.setClearColor(compute_background_color(options))
