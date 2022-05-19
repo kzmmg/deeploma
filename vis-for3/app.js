@@ -1,10 +1,13 @@
 import visualizer from './visualizer.js'
 import visualizer_both from './visualizer_both.js'
 
+const DEFAULT_PROTEIN_1 = "./doobie.pdb"
+const DEFAULT_PROTEIN_2 = "./doobie2.pdb"
+
 function fetch_both(container, pdb_id1, pdb_id2) {
 	
-	pdb_id1 = pdb_id1 || "./doobie.pdb"
-	pdb_id2 = pdb_id2 || "./doobie2.pdb"
+	pdb_id1 = pdb_id1 || DEFAULT_PROTEIN_1
+	pdb_id2 = pdb_id2 || DEFAULT_PROTEIN_2
 	
 	window.fetch(pdb_id1)
 		.then(response => response.text())
@@ -63,8 +66,8 @@ function make_fetch_one(default_pdb, stats_id) {
 	}
 }
 
-const fetch_one = make_fetch_one("./doobie.pdb", 1)
-const fetch_two = make_fetch_one("./doobie2.pdb", 2)
+const fetch_one = make_fetch_one(DEFAULT_PROTEIN_1, 1)
+const fetch_two = make_fetch_one(DEFAULT_PROTEIN_2, 2)
 
 const group_margin = 3
 const style_group = (el, name) => {
@@ -476,6 +479,14 @@ label_one. title = "protein 1"
 label_two. title = "protein 2"
 label_both.title = "protein 1 x protein 2"
 
+label_one. style.pointerEvents = "auto"
+label_two. style.pointerEvents = "auto"
+label_both.style.pointerEvents = "auto"
+
+label_one. style.cursor = "default"
+label_two. style.cursor = "default"
+label_both.style.cursor = "default"
+
 stats_one_absolute_container.append(label_one)
 stats_two_absolute_container.append(label_two)
 stats_both_absolute_container.append(label_both)
@@ -486,6 +497,11 @@ const do_fetch = () => {
 	fetch_one (canvas_container_one)
 	fetch_two (canvas_container_two)
 	fetch_both(canvas_container_both)
+	
+	label_one. innerText = label_one. title = input. value || DEFAULT_PROTEIN_1
+	label_two. innerText = label_two. title = input2.value || DEFAULT_PROTEIN_2
+	label_both.innerText = label_both.title = (input. value || DEFAULT_PROTEIN_1) + " x " +
+													(input2.value || DEFAULT_PROTEIN_2)
 }
 
 input.addEventListener('change', 				do_fetch)
