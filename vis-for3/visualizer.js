@@ -236,9 +236,16 @@ function render(clock, renderer, camera, camera_controls, scene) {
 	renderer.render(scene, camera)
 }
 
-function animate(clock, renderer, camera, camera_controls, scene) {
-	window.requestAnimationFrame(_ => animate(clock, renderer, camera, camera_controls, scene))
-	render(clock, renderer, camera, camera_controls, scene)
+function animate(clock, renderer, camera, camera_controls, scene, options) {
+	window.requestAnimationFrame(_ => animate(clock, renderer, camera, camera_controls, scene, options))
+	
+	if(options.stats && options.do_stats) {
+		options.stats.begin()
+		render(clock, renderer, camera, camera_controls, scene)
+		options.stats.end()
+	} else {
+		render(clock, renderer, camera, camera_controls, scene)
+	}	
 }
 
 export default function visualizer(element, pdb, options) {
@@ -254,7 +261,7 @@ export default function visualizer(element, pdb, options) {
 		const scene = fill_scene(pdb, camera, options)
 
 		add_to_dom(element, renderer)
-		animate(clock, renderer, camera, camera_controls, scene)
+		animate(clock, renderer, camera, camera_controls, scene, options)
 	} catch (e) {
 		const report = 'err!'
 		element.append(`${report}${e.stack}`)

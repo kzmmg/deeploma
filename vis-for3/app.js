@@ -411,6 +411,75 @@ stats_check.addEventListener("change", _ => {
 	if(!val) stats_both.showPanel(100)
 })
 
+// labels
+const label_one = window.document.createElement("p")
+const label_two = window.document.createElement("p")
+const label_both = window.document.createElement("p")
+
+label_one.style.position = "sticky"
+label_two.style.position = "sticky"
+label_both.style.position = "sticky"
+
+label_one.style. top = "0px"
+label_two.style. top = "0px"
+label_both.style.top = "0px"
+
+label_one.style. left = "90px"
+label_two.style. left = "90px"
+label_both.style.left = "90px"
+
+label_one.style. marginTop = "-48px"
+label_two.style. marginTop = "-48px"
+label_both.style.marginTop = "-48px"
+
+label_one.style. paddingTop = "8px"
+label_two.style. paddingTop = "8px"
+label_both.style.paddingTop = "8px"
+
+label_one.style. fontFamily = "sans-serif"
+label_two.style. fontFamily = "sans-serif"
+label_both.style.fontFamily = "sans-serif"
+
+label_one.style. fontSize = "12px"
+label_two.style. fontSize = "12px"
+label_both.style.fontSize = "12px"
+
+label_one.style. height = "14px"
+label_two.style. height = "14px"
+label_both.style.height = "14px"
+
+label_one.style. color = "#aaaaaa"
+label_two.style. color = "#aaaaaa"
+label_both.style.color = "#aaaaaa"
+
+label_one.style. whiteSpace = "nowrap"
+label_two.style. whiteSpace = "nowrap"
+label_both.style.whiteSpace = "nowrap"
+
+label_one.style. overflow = "hidden"
+label_two.style. overflow = "hidden"
+label_both.style.overflow = "hidden"
+
+label_one.style. textOverflow = "ellipsis"
+label_two.style. textOverflow = "ellipsis"
+label_both.style.textOverflow = "ellipsis"
+
+label_one.style. width = "100px"
+label_two.style. width = "100px"
+label_both.style.width = "100px"
+
+label_one.innerText = "protein 1"
+label_two.innerText = "protein 2"
+label_both.innerText = "protein 1 x protein 2"
+
+label_one. title = "protein 1"
+label_two. title = "protein 2"
+label_both.title = "protein 1 x protein 2"
+
+stats_one_absolute_container.append(label_one)
+stats_two_absolute_container.append(label_two)
+stats_both_absolute_container.append(label_both)
+
 // listeners
 
 const do_fetch = () => {
