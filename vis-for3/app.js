@@ -176,14 +176,23 @@ bb_check.title = "draw bounding boxes"
 
 check_group.append(bb_check)
 
-// create bounding boxes checkbox
+// show stats checkbox
 const stats_check = window.document.createElement('input')
 
 stats_check.type = 'checkbox'
 stats_check.title = "show stats"
-stats_check.checked = "false"
+stats_check.checked = true
 
 check_group.append(stats_check)
+
+// show protein filename checkbox
+const label_check = window.document.createElement('input')
+
+label_check.type = 'checkbox'
+label_check.title = "show protein labels"
+label_check.checked = true
+
+check_group.append(label_check)
 
 const slider_group = window.document.createElement("div")
 control_group.append(slider_group)
@@ -269,8 +278,19 @@ pixel_ratio_slider.title = "pixel ratio"
 pixel_ratio_slider.min = 0
 pixel_ratio_slider.max = 100
 
-
 slider_group.append(pixel_ratio_slider)
+
+// create label color slider
+const label_color_slider = window.document.createElement('input')
+
+label_color_slider.type = 'range'
+label_color_slider.value = 98
+label_color_slider.title = "protein label color"
+label_color_slider.min = 0
+label_color_slider.max = 100
+
+
+slider_group.append(label_color_slider)
 
 // containers for 3d (flexbox)
 
@@ -491,6 +511,19 @@ stats_one_absolute_container.append(label_one)
 stats_two_absolute_container.append(label_two)
 stats_both_absolute_container.append(label_both)
 
+label_check.addEventListener("change", _ => {
+	let val = Boolean(label_check.checked)
+	
+	if(val)  label_one. style.display = "visible"
+	if(!val) label_one. style.display = "none"
+			 
+	if(val)  label_two. style.display = "visible"
+	if(!val) label_two. style.display = "none"
+			 
+	if(val)  label_both.style.display = "visible"
+	if(!val) label_both.style.display = "none"
+})
+
 // listeners
 
 const do_fetch = () => {
@@ -519,4 +552,21 @@ pixel_ratio_slider.addEventListener('change', 	do_fetch)
 
 window.addEventListener('resize',				do_fetch)
 
+import * as vis_helpers from './vis_helpers.js'
+
+const colorize_labels = () => {
+	let color = vis_helpers.compute_color(label_color_slider.value)
+	
+	color = color.toString(16)
+	
+	//console.log("value", color)
+	
+	label_one. style.color = color
+	label_two. style.color = color
+	label_both.style.color = color
+}
+
+label_color_slider.addEventListener('change', colorize_labels)
+
 do_fetch()
+colorize_labels()

@@ -1,5 +1,6 @@
-1. Make stats little guy work (-)
-2. Add labels to each molecule canvas (-)
+1. Make stats little guy work (+)
+2. Add labels to each molecule canvas (+)
+2. Make label color customizable with slider (-)
 3. Cleanup visualizer.js in -for3 (-)
 4. Add slider_factor2 (-)
 5. Add regression planes to visualizer (-)
