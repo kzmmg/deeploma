@@ -194,6 +194,15 @@ label_check.checked = true
 
 check_group.append(label_check)
 
+// show screenshoter checkbox
+const screenshoter_check = window.document.createElement('input')
+
+screenshoter_check.type = 'checkbox'
+screenshoter_check.title = "show protein labels"
+screenshoter_check.checked = true
+
+check_group.append(screenshoter_check)
+
 const slider_group = window.document.createElement("div")
 control_group.append(slider_group)
 
@@ -514,14 +523,14 @@ stats_both_absolute_container.append(label_both)
 label_check.addEventListener("change", _ => {
 	let val = Boolean(label_check.checked)
 	
-	if(val)  label_one. style.display = "visible"
-	if(!val) label_one. style.display = "none"
-			 
-	if(val)  label_two. style.display = "visible"
-	if(!val) label_two. style.display = "none"
-			 
-	if(val)  label_both.style.display = "visible"
-	if(!val) label_both.style.display = "none"
+	if(val)  label_one. style.visibility = "visible"
+	if(!val) label_one. style.visibility = "hidden"
+							  
+	if(val)  label_two. style.visibility = "visible"
+	if(!val) label_two. style.visibility = "hidden"
+							  
+	if(val)  label_both.style.visibility = "visible"
+	if(!val) label_both.style.visibility = "hidden"
 })
 
 // listeners
@@ -631,6 +640,21 @@ screenshot_both.addEventListener("click", make_screenshoter(canvas_container_bot
 stats_one_absolute_container. append(screenshot_one)
 stats_two_absolute_container. append(screenshot_two)
 stats_both_absolute_container.append(screenshot_both)
+
+screenshoter_check.addEventListener("change", _ => {
+	let val = Boolean(screenshoter_check.checked)
+	
+	console.log(val)
+	
+	if(val)  screenshot_one. style.visibility = "visible"
+	if(!val) screenshot_one. style.visibility = "hidden"
+			                        
+	if(val)  screenshot_two. style.visibility = "visible"
+	if(!val) screenshot_two. style.visibility = "hidden"
+			                      
+	if(val)  screenshot_both.style.visibility = "visible"
+	if(!val) screenshot_both.style.visibility = "hidden"
+})
 
 do_fetch()
 colorize_labels()
