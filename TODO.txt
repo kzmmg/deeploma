@@ -4,3 +4,4 @@
 4. Add slider_factor2 (-)
 5. Add regression planes to visualizer (-)
 6. Add 2D reps for proteins with squares and midpoints. Leaving spheres as is (non-exclusive) (-)
+7. A little differential coloring for pdb1 and pdb2 as an option (-)

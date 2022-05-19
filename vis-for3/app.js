@@ -26,6 +26,8 @@ function fetch_both(container, pdb_id1, pdb_id2) {
 						fov: fov_slider.value,
 						bb: Boolean(bb_check.checked),
 						pixel_ratio: pixel_ratio_slider.value,
+						stats: stats_both,
+						do_stats: Boolean(stats_check.checked)
 					})
 				})
 				.catch(console.error.bind(console))
@@ -33,7 +35,7 @@ function fetch_both(container, pdb_id1, pdb_id2) {
 		.catch(console.error.bind(console))
 }
 
-function make_fetch_one(default_pdb) {
+function make_fetch_one(default_pdb, stats_id) {
 	return function fetch_one(container, pdb_id) {
 		pdb_id = pdb_id || default_pdb
 		
@@ -53,14 +55,16 @@ function make_fetch_one(default_pdb) {
 					fov: fov_slider.value,
 					bb: Boolean(bb_check.checked),
 					pixel_ratio: pixel_ratio_slider.value,
+					stats: stats_id === 1 ? stats_one : stats_two,
+					do_stats: Boolean(stats_check.checked)
 				})
 			})
 			.catch(console.error.bind(console))
 	}
 }
 
-const fetch_one = make_fetch_one("./doobie.pdb")
-const fetch_two = make_fetch_one("./doobie2.pdb")
+const fetch_one = make_fetch_one("./doobie.pdb", 1)
+const fetch_two = make_fetch_one("./doobie2.pdb", 2)
 
 const group_margin = 3
 const style_group = (el, name) => {
@@ -265,7 +269,7 @@ pixel_ratio_slider.max = 100
 
 slider_group.append(pixel_ratio_slider)
 
-// containers for 3d
+// containers for 3d (flexbox)
 
 const containers = window.document.createElement("div")
 containers.style.display = "flex"
@@ -277,7 +281,6 @@ const container_one = window.document.createElement("div")
 container_one.style.overflow = "scroll"
 container_one.style.flexBasis = "50%"
 container_one.style.height = "50%"
-
 containers.append(container_one)
 
 const container_two = window.document.createElement("div")
@@ -292,13 +295,129 @@ container_both.style.flexBasis = "100%"
 container_both.style.height = "50%"
 containers.append(container_both)
 
-const do_fetch = () => {
-	fetch_one(container_one)
-	fetch_two(container_two)
-	fetch_both(container_both)
-}
 
-do_fetch()
+// content containers
+const content_container_one = window.document.createElement("div")
+content_container_one.style.position = "relative"
+content_container_one.style.width = "max-content"
+container_one.append(content_container_one)
+
+const canvas_container_one = window.document.createElement("div")
+content_container_one.append(canvas_container_one)
+const content_container_two = window.document.createElement("div")
+content_container_two.style.position = "relative"
+content_container_two.style.width = "max-content"
+container_two.append(content_container_two)
+
+const canvas_container_two = window.document.createElement("div")
+content_container_two.append(canvas_container_two)
+
+const content_container_both = window.document.createElement("div")
+content_container_both.style.position = "relative"
+content_container_both.style.width = "max-content"
+container_both.append(content_container_both)
+
+const canvas_container_both = window.document.createElement("div")
+content_container_both.append(canvas_container_both)
+
+// stats shit
+
+import './stats.js'
+
+// window.Stats = Stats
+const stats_one = new Stats()
+stats_one.showPanel(0)
+const stats_two = new Stats()
+stats_two.showPanel(0)
+const stats_both = new Stats()
+stats_both.showPanel(0)
+
+stats_one. dom.style.position 	= "sticky"
+stats_two. dom.style.position 	= "sticky"
+stats_both.dom.style.position 	= "sticky"
+
+stats_one. dom.style.left = "0"
+stats_two. dom.style.left = "0"
+stats_both.dom.style.left = "0"
+
+stats_one. dom.style.top = "0"
+stats_two. dom.style.top = "0"
+stats_both.dom.style.top = "0"
+
+stats_one. dom.style.width = "80px"
+stats_two. dom.style.width = "80px"
+stats_both.dom.style.width = "80px"
+
+const stats_one_absolute_container 		= window.document.createElement("div")
+const stats_two_absolute_container 		= window.document.createElement("div")
+const stats_both_absolute_container 	= window.document.createElement("div")
+
+stats_one_absolute_container.style.position 	= "absolute"
+stats_two_absolute_container.style.position 	= "absolute"
+stats_both_absolute_container.style.position 	= "absolute"
+
+stats_one_absolute_container.style.left  = "0"
+stats_one_absolute_container.style.width  = "100%"
+// stats_one_absolute_container.style.height = "200%"
+// ----- hack no more needed
+stats_one_absolute_container.style.height = "100%"
+
+stats_two_absolute_container.style.left  = "0"
+stats_two_absolute_container.style.width  = "100%"
+// stats_two_absolute_container.style.height = "200%"
+// ----- hack no more needed
+stats_two_absolute_container.style.height = "100%"
+
+stats_both_absolute_container.style.left = "0"
+stats_both_absolute_container.style.width  = "100%"
+// dirty hack everyone absolutely hates
+// how it works: the parent is flexed to 50% of viewport height
+// while canvas inside it is 100% of viewport height
+// so stats_both_absolute_container (and his brothers stats_two_absolute_container and
+// stats_one_absolute_container) think that height: 100% is 50% of viewport
+// and when the corresponding canvas is scrolled down past canvas midpoint
+// then the stickiness breaks. that's how height:200% fixes that
+// stats_both_absolute_container.style.height = "200%"
+// ----- hack no more needed
+
+stats_both_absolute_container.style.height = "100%"
+ 
+stats_one_absolute_container.style.top  = "0"
+stats_two_absolute_container.style.top  = "0"
+stats_both_absolute_container.style.top = "0"
+
+stats_one_absolute_container.style.pointerEvents  = "none"
+stats_two_absolute_container.style.pointerEvents  = "none"
+stats_both_absolute_container.style.pointerEvents = "none"
+
+content_container_one.append(stats_one_absolute_container)
+content_container_two.append(stats_two_absolute_container)
+content_container_both.append(stats_both_absolute_container)
+
+stats_one_absolute_container.append(stats_one.dom)
+stats_two_absolute_container.append(stats_two.dom)
+stats_both_absolute_container.append(stats_both.dom)
+
+stats_check.addEventListener("change", _ => {
+	let val = Boolean(stats_check.checked)
+	
+	if(val) stats_one.showPanel(0)
+	if(!val) stats_one.showPanel(100)
+		
+	if(val) stats_two.showPanel(0)
+	if(!val) stats_two.showPanel(100)
+		
+	if(val) stats_both.showPanel(0)
+	if(!val) stats_both.showPanel(100)
+})
+
+// listeners
+
+const do_fetch = () => {
+	fetch_one (canvas_container_one)
+	fetch_two (canvas_container_two)
+	fetch_both(canvas_container_both)
+}
 
 input.addEventListener('change', 				do_fetch)
 input2.addEventListener('change', 				do_fetch)
@@ -315,17 +434,4 @@ pixel_ratio_slider.addEventListener('change', 	do_fetch)
 
 window.addEventListener('resize',				do_fetch)
 
-import './stats.js'
-
-// window.Stats = Stats
-const stats = new Stats()
-stats.showPanel(0)
-
-window.document.body.append(stats.dom)
-
-stats_check.addEventListener("change", _ => {
-	let val = Boolean(stats_check.checked)
-	
-	if(val) stats.showPanel(0)
-	if(!val) stats.showPanel(100)
-})
+do_fetch()

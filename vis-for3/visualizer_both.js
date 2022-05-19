@@ -229,7 +229,14 @@ function render() {
 
 function animate() {
 	window.requestAnimationFrame(animate)
-	render()
+	
+	if(options.stats && options.do_stats) {
+		options.stats.begin()
+		render()
+		options.stats.end()
+	} else {
+		render()
+	}
 }
 
 export default function visualizer(element, pdb1, pdb2 , opts) {
@@ -242,7 +249,7 @@ export default function visualizer(element, pdb1, pdb2 , opts) {
 		
 		fill_scene(pdb1, pdb2, options)
 		add_to_dom(element)
-		animate()
+		animate(options)
 	} catch (e) {
 		vis_helpers.error_report(element, console, e)
 	}
