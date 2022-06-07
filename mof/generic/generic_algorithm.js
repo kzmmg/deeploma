@@ -1,6 +1,8 @@
 const assert = require('assert')
+const generic_solution = require("./generic_solution")
 
 const max_steps = 1000
+
 
 // base algorithm
 class generic_algorithm {
@@ -10,7 +12,7 @@ class generic_algorithm {
 		
 		// plateau_move : true to allow local search to move into a solution having the same quality as the previous one。 
 		// default true
-		if(config && config.plateu_move !== void 0) 
+		if(config && config.plateau_move !== void 0) 
 			this.plateau_move = config.plateau_move
 		else
 			this.plateau_move = true
@@ -27,6 +29,10 @@ class generic_algorithm {
 			this.terminate_fitness = config.terminate_fitness	
 	}
 	
+	min_difference() {
+		return 0 // may be redefined, of course
+	}
+	
 	// initialize search state, to be overwritten in subs
 	init() {
 		//search state 
@@ -37,6 +43,10 @@ class generic_algorithm {
 		this.current_step = 0 					//current local search steps
 		this.local_trap = false 				//flag whether current solution is trapped in local optima
 			
+	}
+	
+	init_solution(){
+		return this.problem.random_solution()
 	}
 	
 	// operator is given a current step number
@@ -57,14 +67,14 @@ class generic_algorithm {
 			this.current_step += 1
 			
 			if(this._better(this.current_sol, this.best_sol))  
-				this.best_sol = this.current_sol //best known solution
+				this.best_sol = this.current_sol // best known solution
 			if(operator) 
 				operator(this.current_step)					
 		}
 	}
 	
 	terminate() {
-		let threshold_fit_solution = new optimization_solution(null,this.terminate_fitness);
+		let threshold_fit_solution = new generic_solution(null,this.terminate_fitness);
 
 		if(this.local_trap) 
 			return true //if previous step hit local optima
@@ -78,40 +88,36 @@ class generic_algorithm {
 			return true //if use threshold fitness and we found better, break 
 			
 		if(this.cur_step > max_steps) 
-			return true; //reaching system-defined max steps
-		return false;
-	}
-	
-	init_solution(){
-		return this.problem.random_solution()
-	}
-	
-	//given two problem solution, determine which solution is better
-	//return true is solution1 is better than solution2
-	_better (solution1, solution2){  
-		return this.problem.minimization ? 
-			(solution1.fitness < solution2.fitness) : 
-			(solution1.fitness > solution2.fitness) 
-	}	
-	//given two problem solution ,determine if they have equal quality / fitness
-	_equal (solution1, solution2){ 
-		return Math.abs(solution1.fitness - solution2.fitness) <= generic_algorithm.SOLUTION_QUALITY_MIN_DIFFERENCE 
+			return true //reaching system-defined max steps
+		return false
 	}
 	
 	// single step
 	step (n) {
 		assert(void 0) // for subs
 	}
+	
+	//given two problem solution, determine which solution is better
+	//return true is solution1 is better than solution2
+	_better (solution1, solution2) {  
+		return this.problem.minimization ? 
+			(solution1.fitness < solution2.fitness) : 
+			(solution1.fitness > solution2.fitness) 
+	}	
+	//given two problem solution ,determine if they have equal quality / fitness
+	_equal (solution1, solution2) { 
+		return Math.abs(solution1.fitness - solution2.fitness) <= this.min_difference() 
+	}
 		
 	//define the transient operator / neighborhood structure
 	//returns the set of ALL neighbor candidates 
 	//Time Complexity O(K) where K is the branching factor from a single solution node in the app's search landscape 
-	neighbors (solution){
+	neighbors (solution) {
 		assert(void 0) // for subs
 	}
 		
 	//given a solution, returns a RANDOM neighbors of it 
-	neighbor (solution){
+	neighbor (solution) {
 		assert(void 0) // for subs
 	}
 }

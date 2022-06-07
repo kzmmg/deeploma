@@ -56,10 +56,10 @@ class docking_problem extends optimization_problem {
 				
 		let ret = new docking_solution(sol)
 		ret.fitness = this.fitness(ret)
-		return ret;	
+		return ret
 	}
 
-	dimension : function(){
+	dimension(){
 		return docking_constant.dim
 	}
 	
