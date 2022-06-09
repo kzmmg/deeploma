@@ -8,11 +8,11 @@ const default_harmony_memory_len = 20
 
 class heur_harmony_search extends generic_algorithm {
 	constructor(problem, config) {
-		super()
+		super(problem, config)
 		
 		this.harmony_memory = []
 		
-		if (config.harmony_memory_len) {
+		if (config && config.harmony_memory_len) {
 			this.harmony_memory_len = config.harmony_memory_len
 		} else {
 			this.harmony_memory_len = default_harmony_memory_len
@@ -55,7 +55,7 @@ class heur_harmony_search extends generic_algorithm {
 		let worst_note_index = 0
 		
 		for (let i = 1; i < hm.length; i++) {
-			let current_not = hm[i]
+			let current_note = hm[i]
 			let worst_note = hm[worst_note_index]
 			
 			if(this._better(worst_note, current_note)) {
@@ -85,6 +85,8 @@ class heur_harmony_search extends generic_algorithm {
 		
 		// if all notes are equal this is perfect harmony and there is nothing to search for
 		if (this.perfect_harmony()) {
+			if (!this.current_sol) 
+				this.current_sol = this.harmony_memory[0]
 			this.local_trap = true
 			return
 		}

@@ -1,16 +1,13 @@
 const assert = require('assert')
 
-const optimization_solution 	= require('./optimization_solution.js')
-const optimization_problem 	= require('./optimization_problem.js')
-
-const basic_algorithm = require('./basic_algorithm.js')
+const generic_algorithm = require('../generic/generic_algorithm.js')
 
 // simulated annealing algorithm
 
 // cooling schedule
-const cooling_scheme = { ARITHMETIC : 0, GEOMETRIC : 1}
+const cooling_scheme = { ARITHMETIC : 0, GEOMETRIC : 1 }
 
-class simulated_annealing extends basic_algorithm {
+class simulated_annealing extends generic_algorithm {
 	constructor(problem, config) {
 		super(problem, config)
 		
@@ -41,9 +38,22 @@ class simulated_annealing extends basic_algorithm {
 	
 	init(){
 		this.temperature = this.temperature_scope[1] //init to max temperature
-		super(this, arguments)
+		super.init(this, arguments)
 	}
 	
+	_compute_probability() {
+		//relative fitness delta :   
+		//	f(s')-f(s) / f(s)
+		
+		let delta_e = 
+			Math.abs(
+				(this.problem.fitness(neiburr) - this.problem.fitness(this.current_sol)
+			) / this.problem.fitness(this.current_sol));
+			
+		let p = Math.exp(-delta_e / (this.boltzman_const * this.temperature)) // gives (0,1]
+		
+		return p
+	}
 	
 	step(step) {
 		
@@ -52,15 +62,7 @@ class simulated_annealing extends basic_algorithm {
 		if (this._better(neiburr, this.current_sol)) {
 			this.current_sol = neiburr
 		} else {
-			//relative fitness delta :   
-			//	f(s')-f(s) / f(s)
-			
-			let delta_e = 
-				Math.abs(
-					(this.problem.fitness(neiburr) - this.problem.fitness(this.current_sol)
-				) / this.problem.fitness(this.cur_sol));
-				
-			let p = Math.exp(-delta_e / (this.boltzman_const * this.temperature)) // gives (0,1]
+			let p = this._compute_probability()
 		
 			//accept with probablity p
 			if(Math.random() <= p) 
@@ -73,35 +75,39 @@ class simulated_annealing extends basic_algorithm {
 	}
 	
 	_update_temperature(){
-		if(this.cooling_scheme == CoolingScheme.ARITHMETIC) {
+		if(this.cooling_scheme == cooling_scheme.ARITHMETIC) {
 			// (T_max - T_min) / N  
 			let theta = (this.temperature_scope[1] - this.temperature_scope[0]) / this.terminate_ls_steps
 			
 			this.temperature -= theta
-		} else if(this.cooling_scheme == CoolingScheme.GEOMETRIC) {
+		} else if(this.cooling_scheme == cooling_scheme.GEOMETRIC) {
 			 
 			// (T_min/T_max)^(1/N)
 			var alpha = Math.pow( this.temperature_scope[0]/this.temperature_scope[1], 1/this.terminate_ls_steps );
 			
 			this.temperature *= alpha
 		}
-		else assert.ok(false, "cannot be")
+		else assert(false, "cannot be")
 	}
 	
 	//returns true if current solution is a local optima
 	// O(K) time complexity 
 	_check_localoptima () {
 		let neiburrs = this.neighbors(this.current_sol)
+		
+		if(neiburrs.length === 0)
+			return true
+		
 		let better_neiburr = void 0
 		
 		for (let i = 0; i < neiburrs.length; i++) {
 			let neiburr = neiburrs[i]
 			
-			if(this._better(nei, this.current_sol)) 
+			if(this._better(neiburr, this.current_sol)) 
 				better_neiburr = neiburr
 		}
 		
-		return (better_neiburr == void 0) 
+		return (better_neiburr === void 0) 
 	}
 }
 
