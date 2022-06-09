@@ -41,7 +41,7 @@ class simulated_annealing extends generic_algorithm {
 		super.init(this, arguments)
 	}
 	
-	_compute_probability() {
+	_compute_probability(neiburr) {
 		//relative fitness delta :   
 		//	f(s')-f(s) / f(s)
 		
@@ -55,20 +55,21 @@ class simulated_annealing extends generic_algorithm {
 		return p
 	}
 	
-	step(step) {
+	step(step_num) {
 		
 		let neiburr = this.neighbor(this.current_sol)
 		
+		console.log(neiburr)
 		if (this._better(neiburr, this.current_sol)) {
 			this.current_sol = neiburr
 		} else {
-			let p = this._compute_probability()
+			let p = this._compute_probability(neiburr)
 		
 			//accept with probablity p
 			if(Math.random() <= p) 
 				this.current_sol = neiburr
 		}
-		this._update_temperature();
+		this._update_temperature()
 	
 		if (this.check_localoptima)
 			this.local_trap = this._check_localoptima()

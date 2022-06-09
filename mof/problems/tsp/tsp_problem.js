@@ -74,7 +74,7 @@ class tsp_problem extends optimization_problem {
 	}
 
 	// number of city nodes 
-	dimension : function(){
+	dimension(){
 		return this.data.elements.length //an array of arrays
 	}
 	
