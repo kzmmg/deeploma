@@ -1,16 +1,13 @@
 const assert = require('assert')
 
-const matrix = require('sylvester').Matrix
-const vector = require('sylvester').Vector
-
 const docking_constant 		= require('./docking_constant.js')
-const optimization_solution = require('../../optimization_solution.js')
+const generic_solution 		= require('../../generic/generic_solution.js')
 
 
 // docking solution is a 12D vector of:
 // [translate_x1, translate_y1, translate_z1, translate_alpha1, translate_beta1, translate_gamma1,
 // 	translate_x2, translate_y2, translate_z2, translate_alpha2, translate_beta2, translate_gamma2]
-class docking_solution extends optimization_solution {
+class docking_solution extends generic_solution {
 	constructor(vector){
 		this.vector = vector
 		

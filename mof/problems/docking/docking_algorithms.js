@@ -4,9 +4,10 @@ const docking_problem 	= require('./docking_problem.js')
 const docking_solution 	= require('./docking_solution.js')
 const docking_constant 	= require('./docking_constant.js')
 
-const giterative_improvement 	= require('../../giterative_improvement.js')
-const simulated_annealing 		= require('../../simulated_annealing.js')
-const tabu_search 				= require('../../tabu_search.js')
+const giterative_improvement 	= require('../../metaheuristics/heur_giterative_improvement.js')
+const simulated_annealing 		= require('../../metaheuristics/heur_simulated_annealing.js')
+const tabu_search 				= require('../../metaheuristics/heur_tabu_search.js')
+const harmony_search			= require('../../metaheuristics/heur_tabu_search.js')
 
 const neighbors = (candidate) => {
 	assert(this.problem.valid(candidate))
@@ -44,6 +45,16 @@ const neighbor = (candidate) => {
 	return random_neighbor
 }
 
+class docking_harmony_search extends harmony_search {
+	neighbor(candidate) {
+		return neighbor(candidate)
+	}
+	
+	neighbors(candidate) {
+		return neighbors(candidate)
+	}
+}
+
 class docking_tabu_search extends tabu_search {
 	neighbor(candidate) {
 		return neighbor(candidate)
@@ -74,6 +85,7 @@ class docking_giterative_improvement extends giterative_improvement {
 	}
 }
 
+module.exports.docking_harmony_search = docking_harmony_search
 module.exports.docking_tabu_search = docking_tabu_search
 module.exports.docking_simulated_annealing = docking_simulated_annealing
 module.exports.docking_giterative_improvement = docking_giterative_improvement

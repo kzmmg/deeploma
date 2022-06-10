@@ -9,6 +9,8 @@ const version = '0.1'
 
 const fs = require('fs')
 
+const opt = { encoding: 'utf-8' }
+
 // an experiment utility manages a single experiment session 
 // an experiment session may contain the following iterations 
 // 	 * 1 or more problem instances to test against 
@@ -59,8 +61,24 @@ const fs = require('fs')
 
 function load_problem_class(problem_name){
 	var problem = require('example/'+problem_name.toLowerCase()+"/problem.js")
-	assert(problem && typeof(problem)=="function")
+	assert(problem && typeof(problem)=="function", 
+				"failed to load " + 
+					'example/' + 
+						problem_name + 
+						".js")
 	return problem
+}
+
+function load_algorithm_class(problem_name, alg_name) {
+	//load algorithm class
+	let algorithm = require('example/' + problem_name + "/algorithms.js")[alg_name.toUpperCase()]
+	assert.ok(algorithm && typeof(algorithm) == "function", 
+				"failed to load " + 
+					'example/' + 
+						problem_name + 
+						"/Algorithms.js - " + 
+						alg_name.toUpperCase())
+	return algorithm;				
 }
 
 class experiment {
@@ -277,7 +295,6 @@ class experiment {
 	// add a new entry to the master index file  
 	add_master(problem, instance, algorithm, config, filename, runs, steps) {
 		let path = this.outdir + "/master.tsv"
-		let opt = {'encoding' : "utf8"}
 		if(!fs.existsSync(path)){
 			fs.appendFileSync(path, "#version " + version + "\n", opt)
 			fs.appendFileSync(path, "#problem	instance	algorithm	config	filename	runs	steps\n", opt)
@@ -306,9 +323,6 @@ class experiment {
 	//   fitnesses is an arary of  fitness value at each local search step  [0, MAX]
 	//
 	add_experiment_file(filepath, steps, fitnesses) {
-		
-		let opt = {'encoding' : "utf8"}
-		
 		assert.ok(fitnesses.length == steps + 1)
 		
 		if(!fs.existsSync(filepath)) {
@@ -323,23 +337,9 @@ class experiment {
 	
 	// the configuration for this entire experiment session
 	save_config() {
-		let opt = {'encoding' : "utf8"}
 		let path = this.outdir + "/config.json"
 		fs.writeFileSync(path, JSON.stringify(this.config), opt)
 	}
-}
-
-
-function load_algorithm_class(problem_name, alg_name) {
-	//load algorithm class
-	let algorithm = require('example/' + problem_name + "/algorithms.js")[alg_name.toUpperCase()]
-	assert.ok(algorithm && typeof(algorithm) == "function", 
-				"failed to load " + 
-					'example/' + 
-						problem_name + 
-						"/Algorithms.js - " + 
-						alg_name.toUpperCase())
-	return algorithm;				
 }
 
 module.exports.experiment = experiment

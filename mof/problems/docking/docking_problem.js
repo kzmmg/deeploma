@@ -1,11 +1,11 @@
 const assert = require('assert')
 
-const optimization_problem = require('../../optimization_problem.js')
+const generic_solution = require('../../generic/generic_problem.js')
 
 const docking_solution = require('./docking_solution.js')
 const docking_constant = require('./docking_constant.js')
 
-class docking_problem extends optimization_problem {
+class docking_problem extends generic_solution {
 	 
 	constructor(data){
 		if (data instanceof Array) {
@@ -17,7 +17,7 @@ class docking_problem extends optimization_problem {
 	}
 	
 	// return true if the candidate solution satifies problem constraints , otherwise false
-	// a solution is valid if all the following are satisfied 
+	// a solution is valid if all the following constraints are satisfied 
 	//   * contains 12 elements
 	valid(candidate) {
 		assert(candidate instanceof docking_solution)
@@ -37,9 +37,10 @@ class docking_problem extends optimization_problem {
 	score(candidate) {
 		this.get_scoring_function()
 		
-		assert(this.scoring_function instanceof scoring_function)
+		assert(this.scoring_function.score)
+		assert(this.scoring_function.score instanceof Function)
 		
-		this.scoring_function.score(candidate)
+		this.scoring_function.score(this, candidate)
 	}
 	
 	get_scoring_function() {
@@ -51,7 +52,7 @@ class docking_problem extends optimization_problem {
 	random_solution(){		
 		let sol = []
 		
-		for (var i = 0; i <= this.dimension(); i++) 
+		for (var i = 0; i < this.dimension(); i++) 
 			sol.push(docking_constant.fixed_step * Math.random() > 0.5 ? 1 : -1)
 				
 		let ret = new docking_solution(sol)
