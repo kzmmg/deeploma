@@ -38,7 +38,7 @@ class simulated_annealing extends generic_algorithm {
 	
 	init(){
 		this.temperature = this.temperature_scope[1] //init to max temperature
-		super.init(this, arguments)
+		super.init.apply(this, arguments)
 	}
 	
 	_compute_probability(neiburr) {
