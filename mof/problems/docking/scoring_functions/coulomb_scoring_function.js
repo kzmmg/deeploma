@@ -46,9 +46,7 @@ class coulomb_scoring_function extends scoring_function {
 		let dist = Math.sqrt(Math.pow(atom1.x - atom2.x, 2) + 
 								Math.pow(atom1.y - atom2.y, 2) + 
 								Math.pow(atom1.z - atom2.z, 2))
-								
-		
-								
+				
 		let charge_prod = atom1.charge * atom2.charge
 		
 		return coulomb_k * charge_prod / dist

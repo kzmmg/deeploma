@@ -2,8 +2,8 @@ var assert = require('assert');
 
 class optimization_solution {
 	constructor(data, fitness) {
-		this.data = data;
-		this.fitness = fitness;
+		this.data = data
+		this.fitness = fitness
 	}
 	
 	static parse_data(raw) {

@@ -9,9 +9,9 @@ const generic_solution 		= require('../../generic/generic_solution.js')
 // 	translate_x2, translate_y2, translate_z2, translate_alpha2, translate_beta2, translate_gamma2]
 class docking_solution extends generic_solution {
 	constructor(vector){
-		this.vector = vector
+		super()
 		
-		super.apply(this,arguments)
+		this.vector = vector
 	}
 	
 	identical(sol) { 
@@ -31,8 +31,8 @@ class docking_solution extends generic_solution {
 		return docking_constant.dim
 	}
 	
-	toString (){
-		return "[" + this.data.elements + "](" + this.fitness + ")"
+	toString () {
+		return "[" + this.vector + "](" + this.fitness + ")"
 	}
 }
 module.exports = docking_solution

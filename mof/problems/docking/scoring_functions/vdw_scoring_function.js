@@ -45,4 +45,4 @@ class vdw_scoring_function extends scoring_function {
 	}
 }
 
-module.exports = coulomb_scoring_function
+module.exports = vdw_scoring_function
