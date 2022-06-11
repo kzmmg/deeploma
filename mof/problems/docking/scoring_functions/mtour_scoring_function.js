@@ -1,8 +1,9 @@
 const scoring_function = require('../scoring_function.js')
 
-require("../libs/geometry.js")(THREE)
+const THREE = require("../../../../libs/three.js")
+require("../../../../libs/geometry.js")(THREE)
 
-const to_geom(mol) {
+const to_geom = (mol) => {
 	const geometry = new THREE.Geometry()
 	
 	mol.atoms.forEach((atom) => {
@@ -13,14 +14,14 @@ const to_geom(mol) {
 	return geometry
 }
 
-const transform(mol, cand) {
+const transform = (mol, cand) => {
 	mol = to_geom(mol)
 	
 	mol = mol.rotateX(cand[0] * Math.PI / 180)
 	mol = mol.rotateY(cand[1] * Math.PI / 180)
 	mol = mol.rotateZ(cand[2] * Math.PI / 180)
 	
-	mol = mol.translate(cand.slice(3))
+	mol = mol.translate.apply(mol, cand.slice(3))
 	
 	return mol
 }
@@ -30,13 +31,18 @@ class mtour_scoring_function extends scoring_function {
 		let molecule1 = this.problem.molecule1
 		let molecule2 = this.problem.molecule2
 		
-		molecule1 = transform(molecule1, candidate.slice(0,6))
-		molecule2 = transform(molecule2, candidate.slice(6))
+		console.log(arguments)
 		
-		let [maxx, maxy, maxz] = [-1000,-1000,-1000]
-		let [minx, miny, minz] = [ 1000, 1000, 1000]
+		molecule1 = transform(molecule1, candidate.vector.slice(0,6))
+		molecule2 = transform(molecule2, candidate.vector.slice(6))
 		
-		for (let i = 0; i < molecule1.atoms.length; i++) {
+		let atom0 = molecule1.vertices[0]
+		
+		let [maxx, maxy, maxz] = [atom0.x, atom0.y, atom0.z]
+		let [minx, miny, minz] = [atom0.x, atom0.y, atom0.z]
+		
+		
+		for (let i = 0; i < molecule1.vertices.length; i++) {
 			let atom = molecule1.vertices[i]
 			
 			let x = atom.x
@@ -51,7 +57,7 @@ class mtour_scoring_function extends scoring_function {
 			if (z < minz) minz = z
 		}
 		
-		for (let i = 0; i < molecule2.atoms.length; i++) {
+		for (let i = 0; i < molecule2.vertices.length; i++) {
 			let atom = molecule2.vertices[i]
 			
 			let x = atom.x
@@ -70,7 +76,7 @@ class mtour_scoring_function extends scoring_function {
 	}
 	
 	score(candidate) {
-		return score_inj(candidate, transform)
+		return this.score_inj(candidate, transform)
 	}
 }
 

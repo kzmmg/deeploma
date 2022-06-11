@@ -41,7 +41,7 @@ class docking_problem extends generic_solution {
 		
 		assert(this.scoring_function.score instanceof Function)
 		
-		return this.scoring_function.score(this, candidate)
+		return this.scoring_function.score(candidate)
 	}
 	
 	get_scoring_function() {
