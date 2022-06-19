@@ -101,8 +101,8 @@ class wvol_scoring_function extends scoring_function {
 		let molecule1 = this.problem.molecule1
 		let molecule2 = this.problem.molecule2
 		
-		molecule1 = transform(molecule1, candidate.slice(0,6))
-		molecule2 = transform(molecule2, candidate.slice(6))
+		molecule1 = transform(molecule1, candidate.vector.slice(0,6))
+		molecule2 = transform(molecule2, candidate.vector.slice(6))
 		
 		let avg_dist = this._compute_avg_dist(molecule1, molecule2)
 		

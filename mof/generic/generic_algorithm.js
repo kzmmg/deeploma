@@ -74,7 +74,7 @@ class generic_algorithm {
 	}
 	
 	terminate() {
-		let threshold_fit_solution = new generic_solution(null,this.terminate_fitness);
+		let threshold_fit_solution = new generic_solution(null,this.terminate_fitness)
 
 		if(this.local_trap) 
 			return true //if previous step hit local optima
