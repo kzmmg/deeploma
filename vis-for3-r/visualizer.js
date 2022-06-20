@@ -23,7 +23,8 @@ const compute_midpoint = (bounding_box) => {
 function fill_scene(pdb, camera, options) {
 	const scene = new THREE.Scene()
 
-	let atoms = pdb_parser(pdb).atoms
+	let molecule = pdb_parser(pdb)
+	let atoms = molecule.atoms
 
 	const geometry = new Geometry()
 	
@@ -168,7 +169,13 @@ function fill_scene(pdb, camera, options) {
 	light.position.set(-1, 0, 0)
 	scene.add(sun5)
 	
-	return scene
+	if (options.bb) {
+		const bb_mesh = new THREE.Box3Helper( bounding_box, 0xffff00 )
+		
+		scene.add( bb_mesh )
+	}
+	
+	return [ molecule, geometry, scene ]
 }
 
 function compute_color(val) {
@@ -261,7 +268,7 @@ function animate(clock, renderer, camera, camera_controls, scene, options) {
 	}	
 }
 
-export default function visualizer(element, pdb, options) {
+export default function visualizer(element, pdb, options, communication) {
 	try {
 		const clock = new THREE.Clock()
 		
@@ -271,10 +278,12 @@ export default function visualizer(element, pdb, options) {
 		const camera = res[1]
 		const camera_controls = res[2]
 		
-		const scene = fill_scene(pdb, camera, options)
+		const [molecule, geometry, scene] = fill_scene(pdb, camera, options)
 
 		add_to_dom(element, renderer)
 		animate(clock, renderer, camera, camera_controls, scene, options)
+		
+		if (communication) communication(THREE, molecule, geometry, camera)
 	} catch (e) {
 		const report = 'err!'
 		element.append(`${report}${e.stack}`)

@@ -1,6 +1,8 @@
 import visualizer from './visualizer.js'
 import visualizer_both from './visualizer_both.js'
 
+import * as serializer from "./serializer.js"
+
 const DEFAULT_PROTEIN_1 = "./doobie.pdb"
 const DEFAULT_PROTEIN_2 = "./doobie2.pdb"
 
@@ -68,7 +70,7 @@ function make_fetch_one(default_pdb, stats_id) {
 					reg_color: reg_color_slider.value,
 					axis: Boolean(axis_check.checked),
 					axis_length: axis_length_slider.value
-				})
+				}, communication)
 			})
 			.catch(console.error.bind(console))
 	}
@@ -709,3 +711,35 @@ screenshoter_check.addEventListener("change", _ => {
 
 do_fetch()
 colorize_labels()
+
+function communication(THREE, molecule, geometry, camera) {
+	console.log('communication callback invoked', molecule)
+	document.addEventListener('keydown', e => {
+		if (e.key === 's') {
+			console.log('keyed down')
+			e.preventDefault()
+			
+			let camera_quaternion = new THREE.Quaternion()
+			
+			let matr4 = new THREE.Matrix4()
+			
+			camera_quaternion = camera.getWorldQuaternion(camera_quaternion)
+			matr4.makeRotationFromQuaternion (camera_quaternion)
+			
+			geometry.applyMatrix(matr4)
+			
+			geometry.vertices.forEach((vertex, i) => {
+				molecule.atoms[i].x = vertex.x
+				molecule.atoms[i].y = vertex.y
+				molecule.atoms[i].z = vertex.z
+			})
+			
+			let [filename, data] = serializer.serialize_to_simplified_pdb('test' + (new Date().getTime()), molecule)
+			console.log(data, 'data')
+			//https://stackoverflow.com/questions/22578530/failed-to-execute-atob-on-window
+			save_screenshot(URL.createObjectURL(new Blob([data] , {type:'text/plain'})), filename)
+			
+			do_fetch()
+		}
+	}, {once : true})
+}
