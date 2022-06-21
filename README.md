@@ -1,6 +1,6 @@
 # Deep Loma
 
-[Doobies, deep loma mascot](/doobies.png)
+ ![Doobies, deep loma mascot](/doobies.png)
 
 As now I've published out this repo's location, I guess I am obliged to add README.md. This repo is my childish (but still best) effort to grasp at what this "protein-protein docking" thing is all about.
 
