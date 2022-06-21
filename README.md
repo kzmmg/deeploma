@@ -11,7 +11,7 @@ As now I've published out this repo's location, I guess I am obliged to add READ
 
 Any visualizer is powered on the same way: go to its folder and fire `node server` then go to `localhost:8125`
 
-Reach out for me at `kzmmg-spam` ат `gmail.com`
+Reach out for me at `kzmk53668` ат `gmail.com`
 
 ## По-русски
 
@@ -22,4 +22,4 @@ Reach out for me at `kzmmg-spam` ат `gmail.com`
 
 Все версии визуализатора запускаются одинаково: в терминале в папке визуализатора вызвать `node server` и пойти на `localhost:8125`
 
-Почта для заметок: `kzmmg-spam`, живущая на гмайлике.
+Почта для связи: `kzmk53668`, живущая на гмайлике.
